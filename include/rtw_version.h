@@ -1,2 +1,16 @@
-#define DRIVERVERSION	"v5.8.1.1_34311.20190729_COEX20190509-4141"
-#define BTCOEXVERSION	"COEX20190509-4141"
+/******************************************************************************
+ *
+ * Copyright(c) 2007 - 2019 Realtek Corporation.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of version 2 of the GNU General Public License as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ *****************************************************************************/
+#define DRIVERVERSION	"v5.8.1.2_35530.20191025_COEX20191014-4141"
+#define BTCOEXVERSION	"COEX20191014-4141"
