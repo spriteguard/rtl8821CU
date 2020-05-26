@@ -249,7 +249,7 @@
 /*
  * HAL  Related Config
  */
-/*#define CONFIG_RX_PACKET_APPEND_FCS*/
+#define CONFIG_RX_PACKET_APPEND_FCS
 
 /*#define CONFIG_ADHOC_WORKAROUND_SETTING*/
 
