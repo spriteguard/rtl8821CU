@@ -308,8 +308,14 @@ struct rtw_usb_drv {
 	u8 hw_type;
 };
 
+#define xstr(s) str(s)
+#define str(s) #s
 struct rtw_usb_drv usb_drv = {
+#ifdef PORT_NUMBER
+	.usbdrv.name = (char *)DRV_NAME "-" xstr(PORT_NUMBER),
+#else
 	.usbdrv.name = (char *)DRV_NAME,
+#endif
 	.usbdrv.probe = rtw_drv_init,
 	.usbdrv.disconnect = rtw_dev_remove,
 	.usbdrv.id_table = rtw_usb_id_tbl,
@@ -513,6 +519,11 @@ static struct dvobj_priv *usb_dvobj_init(struct usb_interface *usb_intf, const s
 	pdvobjpriv->pusbintf = usb_intf ;
 	pusbd = pdvobjpriv->pusbdev = interface_to_usbdev(usb_intf);
 	usb_set_intfdata(usb_intf, pdvobjpriv);
+
+#ifdef PORT_NUMBER
+	if( pusbd->portnum != PORT_NUMBER )
+		goto free_dvobj;
+#endif
 
 	pdvobjpriv->RtNumInPipes = 0;
 	pdvobjpriv->RtNumOutPipes = 0;
