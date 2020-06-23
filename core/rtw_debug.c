@@ -5857,6 +5857,66 @@ ssize_t proc_set_efuse_map(struct file *file, const char __user *buffer, size_t 
 	return count;
 }
 
+int proc_get_efuse_pid(struct seq_file *m, void *v)
+{
+	struct net_device *dev = m->private;
+	_adapter *padapter = (_adapter *)rtw_netdev_priv(dev);
+	PHAL_DATA_TYPE pHalData = GET_HAL_DATA(padapter);
+	struct pwrctrl_priv *pwrctrlpriv  = adapter_to_pwrctl(padapter);
+	PEFUSE_HAL pEfuseHal = &pHalData->EfuseHal;
+	int i, j;
+	u8 ips_mode = IPS_NUM;
+	u16 mapLen;
+
+	EFUSE_GetEfuseDefinition(padapter, EFUSE_WIFI, TYPE_EFUSE_MAP_LEN, (void *)&mapLen, _FALSE);
+	if (mapLen > EFUSE_MAX_MAP_LEN)
+		mapLen = EFUSE_MAX_MAP_LEN;
+
+	ips_mode = pwrctrlpriv->ips_mode;
+	rtw_pm_set_ips(padapter, IPS_NONE);
+
+	RTW_PRINT_SEL(m, "%02X%02X\n", pHalData->efuse_eeprom_data[EEPROM_PID_8821CU+1], pHalData->efuse_eeprom_data[EEPROM_PID_8821CU]);
+
+	rtw_pm_set_ips(padapter, ips_mode);
+
+	return 0;
+}
+
+ssize_t proc_set_efuse_pid(struct file *file, const char __user *buffer, size_t count, loff_t *pos, void *data)
+{
+	struct net_device *dev = data;
+	_adapter *padapter = (_adapter *)rtw_netdev_priv(dev);
+	PHAL_DATA_TYPE pHalData = GET_HAL_DATA(padapter);
+	struct pwrctrl_priv *pwrctrlpriv  = adapter_to_pwrctl(padapter);
+	char tmp[32];
+	u32 pid;
+	u8 ips_mode = IPS_NUM;
+	u16 mapLen;
+
+	if (count < 6 || count > sizeof(tmp) ) {
+		RTW_INFO("0xXXXX argument required\n");
+		return -EFAULT;
+	}
+
+	EFUSE_GetEfuseDefinition(padapter, EFUSE_WIFI, TYPE_EFUSE_MAP_LEN, (void *)&mapLen, _FALSE);
+	if (mapLen > EFUSE_MAX_MAP_LEN)
+		mapLen = EFUSE_MAX_MAP_LEN;
+
+	ips_mode = pwrctrlpriv->ips_mode;
+	rtw_pm_set_ips(padapter, IPS_NONE);
+
+	if (buffer && !copy_from_user(tmp, buffer, count)) {
+		int num = sscanf(tmp, "%x", (unsigned int *)&pHalData->efuse_eeprom_data[EEPROM_PID_8821CU]);
+	}
+
+	if (rtw_efuse_map_write(padapter, 0, mapLen, &pHalData->efuse_eeprom_data[0]) == _FAIL)
+		RTW_INFO("WARN - rtw_efuse_map_write error!!\n");
+
+        rtw_pm_set_ips(padapter, ips_mode);
+
+	return count;
+}
+
 #ifdef CONFIG_IEEE80211W
 ssize_t proc_set_tx_sa_query(struct file *file, const char __user *buffer, size_t count, loff_t *pos, void *data)
 {
